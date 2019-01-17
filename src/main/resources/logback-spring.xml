@@ -1,0 +1,53 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html#_environment_properties -->
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="logstash-logback-encoder-bug"/>
+    <springProperty scope="context" name="envProfiles" source="spring.profiles.active" defaultValue="-"/>
+
+    <springProfile name="test, localstandalone">
+        <!--<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <!-- https://github.com/logstash/logstash-logback-encoder -->
+            <!-- Using the Composite Encoder disables all Providers which must now be manually enabled -->
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <!--<jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator"/>-->
+                <providers>
+                    <timestamp>
+                        <timeZone>UTC</timeZone>
+                    </timestamp>
+                    <version/> <!-- Add a version property to the JSON -->
+                    <arguments/> <!-- Resolve all custom, parameterized application events -->
+                    <logstashMarkers/> <!-- Resolve all custom, parameterized application events -->
+                    <stackTrace/> <!-- Include stacktraces -->
+                    <tags/> <!-- Include tags -->
+                    <pattern>
+                        <pattern>
+                            {
+                            "severity": "%level",
+                            "service": "${appName:-}",
+                            "trace": "%X{X-B3-TraceId:-}",
+                            "span": "%X{X-B3-SpanId:-}",
+                            "parent": "%X{X-B3-ParentSpanId:-}",
+                            "exportable": "%X{X-Span-Export:-}",
+                            "pid": "${PID:-}",
+                            "thread": "%thread",
+                            "class": "%logger{40}",
+                            "message": "%message",
+                            "env-profiles":"${envProfiles}",
+                            "host": "${HOSTNAME}"
+                            }
+                        </pattern>
+                    </pattern>
+                </providers>
+            </encoder>
+            <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+                <!--<fileNamePattern>${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${LOG_FILE:-springtest.log}.%d{yyyy-MM-dd}_json.log</fileNamePattern>-->
+            <!--</rollingPolicy>-->
+        </appender>
+        <root level="INFO">
+            <!--<appender-ref ref="FILE" />-->
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>

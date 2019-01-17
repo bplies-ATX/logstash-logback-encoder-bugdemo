@@ -1,0 +1,2 @@
+// CHANGEME:  Rename to match your project and repo
+rootProject.name = 'logstash-logback-encoder-bug'
