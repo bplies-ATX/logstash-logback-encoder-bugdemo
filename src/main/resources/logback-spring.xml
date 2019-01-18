@@ -10,7 +10,7 @@
             <!-- Using the Composite Encoder disables all Providers which must now be manually enabled -->
             <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
                 <!-- If using logback-logstash-encoder > 5 try this -->
-                <!--<jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator"/>-->
+                <jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator"/>
                 <providers>
                     <timestamp>
                         <timeZone>UTC</timeZone>
