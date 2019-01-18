@@ -3,7 +3,7 @@
 `StructuredArguments.value` fails to escape the String serialization of an Object.  Causes Elasticsearch to reject forwarded event from Logstash agent.
 For some Apps this is working just fine.  In others with identical dependencies to those below and with & identical `logback-spring.xml` the encoder somehow doesn't work properly.
 
-#Variations
+# Variations
 
 Several demo variations are ready to examine.  Just checkout the named git branch.
 
@@ -16,7 +16,7 @@ Several demo variations are ready to examine.  Just checkout the named git branc
 
 
 
-#Testing
+# Testing
 
 Checkout a branch
 
@@ -24,7 +24,7 @@ run `./gradlew check`
 
 See console output
 
-#Examples
+# Examples
 
 ### Failure Case
 ```
