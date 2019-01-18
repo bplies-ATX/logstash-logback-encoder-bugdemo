@@ -22,10 +22,12 @@ public class SampleController {
 
     @RequestMapping(value = "/echo", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public final ReportMessageDTO echoReportRequest(@RequestBody ReportMessageDTO reportMessageDTO) {
+        // Try to log the DTO -- This is the main problem  (arguments Provider)
         logger.info("Report {} requested.",
                 kv("report-id", reportMessageDTO.getId()),
-                value("report-request-body", reportMessageDTO)); // <==  Will serialize to JSON into log
+                value("report-request-body", reportMessageDTO)); // <== This must be escaped for Elasticsearch
 
+        // Log the DTO by manually serializing it first
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             logger.info("Forced JSON serialization", value("report-request-body", objectMapper.writeValueAsString(reportMessageDTO)));
@@ -33,18 +35,11 @@ public class SampleController {
            logger.error("Exception with forced JSON serialization", e);
         }
 
+        // Show that key-value arguments are being escaped   (logstashMarkers Provider)
         logger.info("Escape test 1 {}",
-                kv("escape-this", "Did \"THIS\" get escaped?")); // <==  Will serialize to JSON into log
+                kv("escape-this", "Did \"THIS\" get escaped?"));
 
-        // DO STUFF
-
-        logger.info("Report {} completed", kv("report-id", reportMessageDTO.getId()));
-        return reportMessageDTO;
-    }
-
-    @RequestMapping(value = "/exception", method = RequestMethod.GET, produces = "application/json")
-    public final Map triggerException() {
-
+        // Show that Exceptions/stacktraces are being escaped  (stackTrace Provider)
         try{
             throw new RuntimeException("This String \"NEEDS\" \"escaping\"");
         }
@@ -52,7 +47,7 @@ public class SampleController {
             logger.error("Triggered exception", ex);
         }
 
-        return Collections.singletonMap("result", "success");
+        return reportMessageDTO;
     }
 }
 

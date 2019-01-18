@@ -1,13 +1,7 @@
 buildscript {
     project.ext {
         bootVersion = '1.5.16.RELEASE'
-        cloudVersion = '1.3.0.RELEASE'
-        cloudDependenciesVersion = 'Edgware.SR5'
-        sleuthVersion = '1.2.5.RELEASE'
-//        bootVersion = '2.1.1.RELEASE'
-//        cloudVersion = '2.0.2.RELEASE'
-//        cloudDependenciesVersion = 'Greenwich.RC2'
-//        sleuthVersion = '2.0.0.RELEASE'
+//        bootVersion = '2.1.2.RELEASE'
         logstashLogbackVersion = '4.11'
 //        logstashLogbackVersion = '5.2'
     }
@@ -19,57 +13,32 @@ buildscript {
     }
 }
 
-
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'idea'
-apply plugin: 'groovy'
-apply plugin: "io.spring.dependency-management"
-
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/libs-milestone-local" }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${project.cloudDependenciesVersion}"
-    }
 }
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${project.bootVersion}"
-    compile "org.springframework.boot:spring-boot-starter-actuator:${project.bootVersion}"
+    compile "net.logstash.logback:logstash-logback-encoder:${project.logstashLogbackVersion}"
 
-    // For microservice log event tracing/correlation, decorate log events with it
-    compile "org.springframework.cloud:spring-cloud-starter-sleuth:${project.sleuthVersion}"
-    compile "net.logstash.logback:logstash-logback-encoder:${project.logstashLogbackVersion}" // for JSON logging for Logstash
-    // Spring Boot 2.1 included verions have bug with embedded JSON
-    // https://jira.qos.ch/browse/LOGBACK-1101
-//    compile 'ch.qos.logback:logback-classic:1.3.0-alpha4' // Forced upgrade, but requires we add back org.slf4j.impl
-//    compile 'ch.qos.logback:logback-core:1.3.0-alpha4'
+    runtime "org.springframework.boot:spring-boot-starter-tomcat:${project.bootVersion}"
 
-    runtime 'org.springframework.boot:spring-boot-starter-tomcat'
-
-    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:"${project.bootVersion}") {
-        exclude(module: 'commons-logging')
-    }
+    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:"${project.bootVersion}")
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'org.spockframework:spock-spring:1.1-groovy-2.4'
 }
 
 configurations {
-//    testCompile.exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
-//    runtime.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-
     integrationTestCompile.extendsFrom testCompile
     integrationTestRuntime.extendsFrom testRuntime
-
 }
 
 sourceSets {
@@ -113,4 +82,3 @@ tasks.withType(Test) {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.10.2'
 }
-

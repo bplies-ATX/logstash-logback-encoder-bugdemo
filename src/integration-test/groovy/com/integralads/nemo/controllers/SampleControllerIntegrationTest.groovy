@@ -24,12 +24,4 @@ class SampleControllerIntegrationTest extends BaseControllerTest {
         then: "We have a result"
         ret != null
     }
-
-    def "An Exception logged through the stackTrace Provider is escaped"() {
-        when: "Trigger an Exception for the log"
-        def ret = doGet('/exception')
-
-        then: "We have a result"
-        ret != null
-    }
 }
