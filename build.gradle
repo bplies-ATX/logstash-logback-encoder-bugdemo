@@ -1,7 +1,7 @@
 buildscript {
     project.ext {
-        bootVersion = '1.5.16.RELEASE'
-//        bootVersion = '2.1.2.RELEASE'
+//        bootVersion = '1.5.16.RELEASE'
+        bootVersion = '2.1.2.RELEASE'
         logstashLogbackVersion = '4.11'
 //        logstashLogbackVersion = '5.2'
     }
